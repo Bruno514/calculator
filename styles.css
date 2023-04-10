@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.calc-container {
+  display: flex;
+  justify-content: center;
+  align-content: flex-end;
+}
+
+.calc-base {
+  display: flex;
+  flex-direction: column;
+  background-color: grey;
+  height: 38rem;
+  width: 26rem;
+  border-radius: 4px;
+}
+
+.visor {
+  background-color: rgb(33, 32, 30);
+  width: 94%;
+  height: 20%;
+  margin: 13px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.visor .displaying {
+  color: rgb(181, 45, 14);
+  font-size: 2.1rem;
+  transform: scale(1, 1);
+}
+
+.row {
+  display: flex;
+  gap: 2px;
+  width: 95%;
+  margin: 10px;
+}
+
+.row button {
+  flex-grow: 1;
+  height: 5rem;
+  border-radius: 10px;
+}
+
+
+.all-clear, 
+.invert {
+  background-color: brown;
+}
+
+.all-clear {
+  flex-grow: 2;
+  width: 125px;
+}
+
+.operator {
+  background-color: aqua;
+  font-size: 1.3rem;
+}
+
+#zero {
+  flex-grow: 2;
+}
+
+.number {
+  background-color:azure;
+}
+
