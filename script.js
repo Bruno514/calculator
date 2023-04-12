@@ -1,65 +1,67 @@
 let calculatorContent = "0";
-let calculatorLogic = { numbers: [], currentOperator: "" };
+let numbers = [];
+let currentOperator = "";
+const allOperators = ["add", "subtract", "multiply", "divide"]
 
 function updateCalcScreen() {
   const visor = document.querySelector(".visor .displaying");
   visor.textContent = calculatorContent;
 }
 
+function hasOperator() {
+  return !!currentOperator;
+}
+
 function calcResult(numbers, op) {
-  if (op == "add") return numbers[0] + numbers[1]
-  else if (op == "subtract") return numbers[0] - numbers[1]
-  else if (op == "divide") return numbers[0] / numbers[1]
-  else if (op == "multiply") return numbers[0] * numbers[1]
+  if (op == "add") return numbers[0] + numbers[1];
+  else if (op == "subtract") return numbers[0] - numbers[1];
+  else if (op == "divide") return numbers[0] / numbers[1];
+  else if (op == "multiply") return numbers[0] * numbers[1];
 }
 
 function onButtonPress() {
   const classList = this.classList;
 
-  console.log(calculatorLogic)
   if (classList.contains("number")) {
-    if (calculatorLogic.currentOperator && calculatorLogic.numbers.length == 1) {
-      calculatorContent = "0"
-      calculatorLogic.numbers.push(calculatorContent);
-    }
+    number = this.dataset.button;
 
-    if (calculatorContent == "0") {
-      calculatorContent = this.dataset.button;
+    // Check if there aren't numbers to calculator or
+    // if it`s a result of a previous calc, if so, this resets
+    if (!numbers.length || currentOperator == "result" || hasOperator()) {
+      calculatorContent = number;
     } else {
-      calculatorContent += this.dataset.button;
+      // continue appending numbers
+      calculatorContent += number;
     }
 
-    if (calculatorLogic.numbers.length == 1) {
-      calculatorLogic.numbers[0] = calculatorContent;
-    } else if (calculatorLogic.numbers.length == 2) {
-      calculatorLogic.numbers[1] = calculatorContent;
-    } 
+    // check if this number is the first or second to calculate
+    if (numbers.length <= 1) {
+      numbers[0] = calculatorContent;
+    } else if (numbers.length == 2 || hasOperator()) {
+      numbers[1] = calculatorContent;
+    }
   } else if (classList.contains("operator")) {
-    if (this.dataset.button === "result") {
-      let result = calcResult(
-        calculatorLogic.numbers,
-        calculatorLogic.currentOperator
-      );
-      calculatorLogic.currentOperator = "";
-      calculatorLogic.numbers.pop();
-      calculatorLogic.numbers[0] = result;
+    operator = this.dataset.operator;
+    if (operator == "result") {
+      let result = calcResult(numbers, currentOperator);
+      currentOperator = operator;
+      numbers = [result];
       calculatorContent = result;
-    } else {
-      if (calculatorLogic.numbers.length == 2) {
-        let result = calcResult(
-          calculatorLogic.numbers,
-          calculatorLogic.currentOperator
-        );
-        calculatorLogic.numbers.pop();
-        calculatorLogic.numbers[0] = result;
+    } else if (allOperators.includes(operator)) {
+      if (numbers[0] != undefined) {
+        currentOperator = operator;
+      }
+
+      if (numbers[1] != undefined) {
+        let result = calcResult(numbers, currentOperator);
+        numbers = [result];
         calculatorContent = result;
       }
-      calculatorLogic.currentOperator = this.dataset.operator;
     }
   } else if (classList.contains("all-clear")) {
     calculatorContent = 0;
-    calculatorLogic.numbers = [];
-    calculatorLogic.currentOperator = "";
+    numbers = [];
+    currentOperator = "";
   }
   updateCalcScreen();
 }
