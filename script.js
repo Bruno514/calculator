@@ -1,7 +1,21 @@
 let calculatorContent = "0";
-let numbers = [];
+let slots = [];
+let slotsIndex = 0;
 let currentOperator = "";
-const allOperators = ["add", "subtract", "multiply", "divide"]
+const allOperators = ["add", "subtract", "multiply", "divide"];
+
+function resetCalculator() {
+  calculatorContent = 0;
+  slots = [];
+  slotsIndex = 0;
+  currentOperator = "";
+}
+
+function debug() {
+  console.log(slots);
+  console.log(currentOperator);
+  console.log(slotsIndex);
+}
 
 function updateCalcScreen() {
   const visor = document.querySelector(".visor .displaying");
@@ -12,64 +26,67 @@ function hasOperator() {
   return !!currentOperator;
 }
 
+function appendNumberToArrayIndex(number) {
+  // TO-DO!
+  if (!slots[slotsIndex] || currentOperator == "result")
+    slots[slotsIndex] = number;
+  else slots[slotsIndex] += number;
+}
+
+function operate(op) {
+  let result = calcResult(slots, op);
+  (slots = [result]), (slotsIndex = 0);
+  calculatorContent = slots[slotsIndex];
+  currentOperator = "";
+}
+
 function calcResult(numbers, op) {
-  if (op == "add") return numbers[0] + numbers[1];
-  else if (op == "subtract") return numbers[0] - numbers[1];
-  else if (op == "divide") return numbers[0] / numbers[1];
-  else if (op == "multiply") return numbers[0] * numbers[1];
+  if (op == "add") return parseInt(numbers[0]) + parseInt(slots[1]);
+  else if (op == "subtract") return numbers[0] - slots[1];
+  else if (op == "divide") return numbers[0] / slots[1];
+  else if (op == "multiply") return numbers[0] * slots[1];
 }
 
 function onButtonPress() {
   const classList = this.classList;
 
   if (classList.contains("number")) {
-    number = this.dataset.button;
+    const number = this.dataset.button;
 
-    // Check if there aren't numbers to calculator or
-    // if it`s a result of a previous calc, if so, this resets
-    if (!numbers.length || currentOperator == "result" || hasOperator()) {
-      calculatorContent = number;
-    } else {
-      // continue appending numbers
-      calculatorContent += number;
-    }
+    appendNumberToArrayIndex(number);
 
-    // check if this number is the first or second to calculate
-    if (numbers.length <= 1) {
-      numbers[0] = calculatorContent;
-    } else if (numbers.length == 2 || hasOperator()) {
-      numbers[1] = calculatorContent;
-    }
+    calculatorContent = slots[slotsIndex];
   } else if (classList.contains("operator")) {
-    operator = this.dataset.operator;
+    const operator = this.dataset.operator;
+
     if (operator == "result") {
-      let result = calcResult(numbers, currentOperator);
-      currentOperator = operator;
-      numbers = [result];
-      calculatorContent = result;
-    } else if (allOperators.includes(operator)) {
-      if (numbers[0] != undefined) {
+      if (slotsIndex == 1) {
+        operate(currentOperator);
         currentOperator = operator;
       }
-
-      if (numbers[1] != undefined) {
-        let result = calcResult(numbers, currentOperator);
-        numbers = [result];
-        calculatorContent = result;
+    }
+    if (allOperators.includes(operator)) {
+      // check if first slot has a number
+      if (slotsIndex == 0) {
+        slotsIndex = 1;
+        currentOperator = operator
+      } else if (slotsIndex == 1) {
+        operate(currentOperator);
+        slotsIndex = 1;
+        currentOperator = operator;
       }
     }
   } else if (classList.contains("all-clear")) {
-    calculatorContent = 0;
-    numbers = [];
-    currentOperator = "";
+    resetCalculator();
   }
+  debug();
   updateCalcScreen();
 }
 
 // add button listeners
 const buttons = document.querySelectorAll("button");
+updateCalcScreen();
+
 buttons.forEach((e) => {
   e.addEventListener("click", onButtonPress);
 });
-
-updateCalcScreen();
