@@ -26,10 +26,18 @@ function hasOperator() {
   return !!currentOperator;
 }
 
+function invert() {
+  if (slots[slotsIndex]) {
+    slots[slotsIndex] *= -1;
+  }
+  calculatorContent = slots[slotsIndex];
+}
+
 function appendNumberToArrayIndex(number) {
-  // TO-DO!
-  if (!slots[slotsIndex] || currentOperator == "result")
+  if (!slots[slotsIndex] || currentOperator == "result") {
     slots[slotsIndex] = number;
+    if (currentOperator == "result") currentOperator = ""
+  }
   else slots[slotsIndex] += number;
 }
 
@@ -37,7 +45,7 @@ function operate(op) {
   let result = calcResult(slots, op);
   (slots = [result]), (slotsIndex = 0);
   calculatorContent = slots[slotsIndex];
-  currentOperator = "";
+  //currentOperator = "";
 }
 
 function calcResult(numbers, op) {
@@ -69,7 +77,7 @@ function onButtonPress() {
       // check if first slot has a number
       if (slotsIndex == 0) {
         slotsIndex = 1;
-        currentOperator = operator
+        currentOperator = operator;
       } else if (slotsIndex == 1) {
         operate(currentOperator);
         slotsIndex = 1;
@@ -78,6 +86,15 @@ function onButtonPress() {
     }
   } else if (classList.contains("all-clear")) {
     resetCalculator();
+  } else if (classList.contains("invert")) {
+    invert();
+  } else if (classList.contains("other")) {
+    console.log(slots[slotsIndex])
+    if (!slots[slotsIndex].includes(".")) {
+      slots[slotsIndex] += "."
+      console.log(slots[slotsIndex])
+      calculatorContent = slots[slotsIndex]
+    }
   }
   debug();
   updateCalcScreen();
